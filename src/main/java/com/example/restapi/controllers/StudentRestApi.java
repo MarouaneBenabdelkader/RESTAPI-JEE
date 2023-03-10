@@ -9,18 +9,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.stream.Stream;
 
-@WebServlet("/student/*")
+@WebServlet("/students/*")
 public class StudentRestApi extends HttpServlet {
     private final Gson gson = new Gson();
-    public static String fromBufferToString(BufferedReader reader) {
-        Stream<String> stream = reader.lines();
 
-        return stream.reduce("", (acc, ele) -> acc + ele);
-    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         Persistence service = StudentDaoMemory.getInstance();
@@ -44,9 +38,7 @@ public class StudentRestApi extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
-        BufferedReader reader = req.getReader();
-        String body = fromBufferToString(reader);
-        Student student = gson.fromJson(body,Student.class);
+        Student student =(Student) req.getAttribute("student");
         if(student.getCne().equals("") || student.getName().equals("")){
             resp.setStatus(400);
             resp.sendError(400);
@@ -59,9 +51,7 @@ public class StudentRestApi extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
-        BufferedReader reader = req.getReader();
-        String body = fromBufferToString(reader);
-        Student student = gson.fromJson(body,Student.class);
+        Student student =(Student) req.getAttribute("student");
         if(student.getCne().equals("") || student.getName().equals("")){
             resp.setStatus(400);
             resp.sendError(400);
